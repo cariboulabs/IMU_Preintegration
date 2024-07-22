@@ -43,6 +43,7 @@ int main(int argc, char **argv) {
     LoadEuRocIMUData(input_filepath, imu_datas);
 
     IMUPreintegrator IMUPreintegrator;
+    output << "qw,qx,qy,qz,px,py,pz,vx,vy,vz" << std::endl;
     for(int i=0; i < imu_datas.size(); ++i)
     {
         IMUData imu_data = imu_datas[i];
@@ -53,11 +54,12 @@ int main(int argc, char **argv) {
 
         auto delta_rot_R = IMUPreintegrator.GetDeltaRot();
         auto delta_rot_quat = RotationMatrixToQuat(delta_rot_R);
-        output << delta_rot_quat[0] << "," << delta_rot_quat[1] << "," << delta_rot_quat[2] << "," << delta_rot_quat[3] << std::endl;
+        output << delta_rot_quat[0] << "," << delta_rot_quat[1] << "," << delta_rot_quat[2] << "," << delta_rot_quat[3] << ",";
         auto delta_p = IMUPreintegrator.GetDeltaP();
-        output << delta_p[0] << "," << delta_p[1] << "," << delta_p[2] << "," << std::endl;
+        output << delta_p[0] << "," << delta_p[1] << "," << delta_p[2] << ",";
         auto delta_v = IMUPreintegrator.GetDeltaV();
-        output << delta_v[0] << "," << delta_v[1] << "," << delta_v[2] << "," << std::endl;
+        output << delta_v[0] << "," << delta_v[1] << "," << delta_v[2] << ",";
+        output << std::endl;
         
 
         // output << IMUPreintegrator.GetDeltaV() << std::endl;
