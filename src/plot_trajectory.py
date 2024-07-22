@@ -79,9 +79,20 @@ if __name__ == '__main__':
             state = NavState(q,t,v)
             traj_data.append(state)
 
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+    # x = []; y = []; z = []
+    # for state in traj_data[:5]:
+    #     x.append(state.t[0])
+    #     y.append(state.t[1])
+    #     z.append(state.t[2])
+    # ax.plot(x, y, z)
+    # set_axes_equal(ax)
+    # plt.show()
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    for state in traj_data:
+    for state in traj_data[:5]:
         plot_pose3_on_axes(ax, state.t, state.q)
     set_axes_equal(ax)
     plt.show()
