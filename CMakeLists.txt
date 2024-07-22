@@ -34,9 +34,6 @@ ${EIGEN3_INCLUDE_DIR}
 ${CHOLMOD_INCLUDE_DIR}
 )
 
-# 设置CMake库输出目录。
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
-
 # 添加库 
 add_library(${PROJECT_NAME} SHARED
         src/so3.cpp
@@ -54,9 +51,13 @@ ${BLAS_LIBRARIES}
 ${LAPACK_LIBRARIES}
 )
 
+#add opencv
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+
 
 # 编译单目KITTI数据集可执行文件
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 add_executable(main src/main.cpp)
 target_link_libraries(main ${PROJECT_NAME})
 
