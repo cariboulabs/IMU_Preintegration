@@ -44,7 +44,6 @@ add_library(${PROJECT_NAME} SHARED
 # 链接库。 
 target_link_libraries(${PROJECT_NAME}
 ${EIGEN3_LIBS}
-#${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 cholmod
 ${CHOLMOD_LIBRARIES}
 ${BLAS_LIBRARIES}
