@@ -8,16 +8,39 @@
 #include <opencv2/core/core.hpp>
 
 
-void LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
-void LoadSrulikData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
+bool LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
+bool LoadSrulikData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
 Eigen::Vector4d RotationMatrixToQuat(const Eigen::Matrix3d& q);
 
 int main(int argc, char **argv) {
-    std::ofstream output("out.csv");
-    std::string imu_file_path("/home/alon/repos/IMU_Preintegration/data/data.csv");
+    std::string input_filepath = "in.csv";  // default input file
+    std::string output_file_path = "out.csv";  // default output file
+
+    // Process command-line arguments
+    for (int i = 1; i < argc; i++) {
+        if (std::strcmp(argv[i], "--help") == 0) {
+            std::cout << "Usage: " << argv[0] << " [options]\n"
+                      << "Options:\n"
+                      << "  --input <path>      Set the input IMU file path (default: in.csv)\n"
+                      << "                      in.csv - timestamp[ns], wx[rad/s], wy[rad/s], wz[rad/s], ax[m/s^2], ay[m/s^2], az[m/s^2]\n"
+                      << "  --output <path>     Set the output file path (default: out.csv)\n"
+                      << "                      out.csv - quaternion[wxyz], position[xyz], velocity[xyz]\n"
+                      << "  --help              Display this help message and exit\n";
+            return 0;
+        } else if (std::strcmp(argv[i], "--input") == 0 && i + 1 < argc) {
+            input_filepath = argv[++i];  // Increment i to skip next argument since it's used here
+        } else if (std::strcmp(argv[i], "--output") == 0 && i + 1 < argc) {
+            output_file_path = argv[++i];
+        } else {
+            std::cerr << "Unknown option or missing argument for " << argv[i] << ". Use --help for usage information.\n";
+            return 1;
+        }
+    }
+
+    std::ofstream output(output_file_path);
 
     std::vector<IMUData> imu_datas;
-    LoadEuRocIMUData(imu_file_path, imu_datas);
+    LoadEuRocIMUData(input_filepath, imu_datas);
 
     IMUPreintegrator IMUPreintegrator;
     for(int i=0; i < imu_datas.size(); ++i)
@@ -59,11 +82,16 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas)
+bool LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas)
 {
 
     std::ifstream fImus;
     fImus.open(strImuPath.c_str());
+    if (!fImus.is_open())
+    {
+        std::cerr << "Failed to open imu file: " << strImuPath << std::endl;
+        return false;
+    }
     imu_datas.reserve(30000);
     //int testcnt = 10;
 
@@ -99,6 +127,7 @@ void LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_d
 
         }
     }
+    return true;
 }
 
 Eigen::Vector4d RotationMatrixToQuat(const Eigen::Matrix3d& q) {
