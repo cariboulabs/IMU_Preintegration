@@ -84,6 +84,60 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+double SRULIK_CLOCK_TIME = 1.0 / (16e6 * 30.0 / 7.0);
+
+bool LoadSrulikIMUData(const std::string& filename, std::vector<IMUData> &imu_datas) {
+    std::ifstream file(filename);
+    std::string line;
+    std::getline(file, line); // Skip the header line
+
+    std::ifstream fImus;
+    fImus.open(filename.c_str());
+    if (!fImus.is_open())
+    {
+        std::cerr << "Failed to open imu file: " << filename << std::endl;
+        return false;
+    }
+    imu_datas.reserve(30000);
+    uint32_t prev_time = 0;
+
+    bool first_line = false;
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string cell;
+        std::vector<std::string> row;
+
+        while (std::getline(ss, cell, ',')) {
+            row.push_back(cell);
+        }
+        assert(row.size() > 28); // Ensure there are enough columns
+        double accx = std::stod(row[0]);
+        double accy = std::stod(row[1]);
+        double accz = std::stod(row[2]);
+        double gyrox = std::stod(row[3]);
+        double gyroy = std::stod(row[4]);
+        double gyroz = std::stod(row[5]);
+        uint64_t current_time = std::stoull(row[9]);
+
+        if (!first_line) {
+            if (prev_time > current_time) {
+                current_time = current_time + 0xFFFFFFFF;
+            }
+            prev_time = current_time;
+        } else {
+            prev_time = current_time;
+            first_line = false;
+            continue;
+        }
+
+        double sec_time = SRULIK_CLOCK_TIME * (double)current_time;
+        IMUData imudata(gyrox, gyroy, gyroz, accx, accy, accz, sec_time);
+        imu_datas.push_back(imudata);
+    }
+    return true;
+}
+
+
 bool LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas)
 {
 
