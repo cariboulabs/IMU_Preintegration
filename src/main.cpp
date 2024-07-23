@@ -9,7 +9,7 @@
 
 
 bool LoadEuRocIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
-bool LoadSrulikData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
+bool LoadSrulikIMUData(const std::string &strImuPath, std::vector<IMUData> &imu_datas);
 Eigen::Vector4d RotationMatrixToQuat(const Eigen::Matrix3d& q);
 
 int main(int argc, char **argv) {
@@ -40,7 +40,8 @@ int main(int argc, char **argv) {
     std::ofstream output(output_file_path);
 
     std::vector<IMUData> imu_datas;
-    LoadEuRocIMUData(input_filepath, imu_datas);
+    // LoadEuRocIMUData(input_filepath, imu_datas);
+    LoadSrulikIMUData(input_filepath, imu_datas);
 
     IMUPreintegrator IMUPreintegrator;
     output << "qw,qx,qy,qz,px,py,pz,vx,vy,vz" << std::endl;

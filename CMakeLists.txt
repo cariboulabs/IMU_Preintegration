@@ -62,7 +62,9 @@ target_link_libraries(main ${PROJECT_NAME})
 
 file(COPY ${PROJECT_SOURCE_DIR}/data/euroc_data.csv DESTINATION ${PROJECT_BINARY_DIR})
 file(COPY ${PROJECT_SOURCE_DIR}/data/imu_gnss_data.csv DESTINATION ${PROJECT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/data/imu_gnss_data_steady.csv DESTINATION ${PROJECT_BINARY_DIR})
 file(COPY ${PROJECT_SOURCE_DIR}/src/plot_trajectory.py DESTINATION ${PROJECT_BINARY_DIR})
+
 
 
 
