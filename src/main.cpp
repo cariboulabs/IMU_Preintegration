@@ -115,9 +115,9 @@ bool LoadSrulikIMUData(const std::string& filename, std::vector<IMUData> &imu_da
         double accx = std::stod(row[0]);
         double accy = std::stod(row[1]);
         double accz = std::stod(row[2]);
-        double gyrox = std::stod(row[3]);
-        double gyroy = std::stod(row[4]);
-        double gyroz = std::stod(row[5]);
+        double gyrox = std::stod(row[3]) / 180.0 * M_PI;
+        double gyroy = std::stod(row[4])/ 180.0 * M_PI;
+        double gyroz = std::stod(row[5]) / 180.0 * M_PI;
         uint64_t current_time = std::stoull(row[9]);
 
         if (!first_line) {
